@@ -78,7 +78,7 @@ public class Board {
         while (availableCells.size() > (width * height) - totalMines) {
             int index = random.nextInt(availableCells.size());
             int cellIndex = availableCells.get(index);
-            cells[cellIndex / height][cellIndex % width].makeMine();
+            cells[cellIndex / width][cellIndex % width].makeMine();
             availableCells.remove(index);
         }
     }
@@ -89,7 +89,12 @@ public class Board {
      * @throws IllegalStateException if the board has already been constructed
      */
     private void updateCells() {
-        // TODO: finish method
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if (!cells[i][j].isMine())
+                    cells[i][j].setNumber(getNeighborCount(i, j));
+            }
+        }
     }
 
     /**
@@ -97,10 +102,28 @@ public class Board {
      * @param row the row of the cell we want to check
      * @param col the column of the cell we want to check
      * @return the number of mines neighboring the cell
+     * @throws IndexOutOfBoundsException if the cell is out of bounds
      */
     private int getNeighborCount(int row, int col) {
+        if (row < 0 || row > height || col < 0 || col > width)
+            throw new IndexOutOfBoundsException("invalid row and col pair");
+
+        int count = 0;
+
+        // Check the 3x3 box around a cell
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                // Make sure it's in the bounds
+                if ( (0 <= row + i && row + i < height) && (0 <= col + j && col + j < width) ) {
+
+                    if (cells[row + i][col + j].isMine())
+                        count++;
+                }
+            }
+        }
+
         // TODO: finish method
-        return -1;
+        return count;
     }
 
     /**
