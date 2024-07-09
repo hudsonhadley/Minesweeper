@@ -30,8 +30,7 @@ public class Cell {
      * @return the number of the cell
      */
     public int getNumber() {
-        // TODO: finish method
-        return -1;
+        return number;
     }
 
     /**
@@ -39,44 +38,41 @@ public class Cell {
      * @param number the number we want to assign to the cell
      */
     public void setNumber(int number) {
-        // TODO: finish method
+        this.number = number;
     }
 
     /**
-     * @return true if the cell is a mine
+     * @return true if the cell is a mine (it's number is -1)
      */
     public boolean isMine() {
-        // TODO: finish method
-        return false;
+        return number == -1;
     }
 
     /**
      * @return true if the cell is flagged
      */
-    public boolean isFlagged() {
-        // TODO: finish method
-        return false;
+    public boolean hasFlag() {
+        return isFlagged;
     }
 
     /**
      * @return true if the cell is flagged
      */
     public boolean isRevealed() {
-        // TODO: finish method
-        return false;
+        return isRevealed;
     }
 
     /**
      * Flips the flag boolean variable. If the cell was flagged, it will switch to not being flagged and vice versa.
      */
     public void flag() {
-        // TODO: finish method
+        isFlagged = !isFlagged;
     }
 
     /**
      * If the cell is not already revealed, it set the isRevealed variable to true.
      */
     public void reveal() {
-        // TODO: finish method
+        isRevealed = true;
     }
 }

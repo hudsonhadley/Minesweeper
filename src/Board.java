@@ -33,7 +33,18 @@ public class Board {
      * @throws NegativeArraySizeException if the width or height is negative
      */
     public Board(int width, int height, int totalMines) {
-        // TODO: finish method
+        if (width < 0 || height < 0)
+            throw new NegativeArraySizeException("width and height must be non-negative");
+        else if (totalMines > width * height)
+            throw new IllegalArgumentException("totalMines must be less than the allotted cells");
+
+        this.width = width;
+        this.height = height;
+        this.totalMines = totalMines;
+
+        cells = new Cell[height][width];
+        fillMines();
+        updateCells();
     }
 
     /**
@@ -68,16 +79,14 @@ public class Board {
      * @return the width of the board
      */
     public int getWidth() {
-        // TODO: finish method
-        return -1;
+        return width;
     }
 
     /**
      * @return the height of the board
      */
     public int getHeight() {
-        // TODO: finish method
-        return -1;
+        return height;
     }
 
     /**
@@ -88,8 +97,9 @@ public class Board {
      * @throws IndexOutOfBoundsException if the cell is out of bounds
      */
     public boolean isMine(int row, int col) {
-        // TODO: finish method
-        return false;
+        if (row < 0 || row > height || col < 0 || col > width)
+            throw new IndexOutOfBoundsException("invalid row and col pair");
+        return cells[row][col].isMine();
     }
 
     /**
@@ -99,17 +109,23 @@ public class Board {
      * @throws IndexOutOfBoundsException if the cell is out of bounds
      */
     public void flag(int row, int col) {
-        // TODO: finish method
+        if (row < 0 || row > height || col < 0 || col > width)
+            throw new IndexOutOfBoundsException("invalid row and col pair");
+
+        cells[row][col].flag();
     }
 
     /**
      * @param row the row of the cell
      * @param col the column of the cell
      * @return true if the cell has a flag
+     * @throws IndexOutOfBoundsException if the cell is out of bounds
      */
     public boolean hasFlag(int row, int col) {
-        // TODO: finish method
-        return false;
+        if (row < 0 || row > height || col < 0 || col > width)
+            throw new IndexOutOfBoundsException("invalid row and col pair");
+
+        return cells[row][col].hasFlag();
     }
 
     /**
