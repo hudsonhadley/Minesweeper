@@ -23,7 +23,9 @@ public class Cell {
      * The default constructor which creates a blank cell with hasn't been revealed, and isn't flagged.
      */
     public Cell() {
-        // TODO: finish method
+        number = 0;
+        isFlagged = false;
+        isRevealed = false;
     }
 
     /**
@@ -39,6 +41,13 @@ public class Cell {
      */
     public void setNumber(int number) {
         this.number = number;
+    }
+
+    /**
+     * Makes the cell a mine
+     */
+    public void makeMine() {
+        this.number = -1;
     }
 
     /**

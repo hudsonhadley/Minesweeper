@@ -1,3 +1,8 @@
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Random;
+
 /**
  * A minesweeper board with a width, height, amount of mines, and the cells holding the mines. The board
  * is stored as a 2D array with -1 representing a mine, 0 representing a blank space, and positive numbers
@@ -43,6 +48,7 @@ public class Board {
         this.totalMines = totalMines;
 
         cells = new Cell[height][width];
+
         fillMines();
         updateCells();
     }
@@ -52,7 +58,29 @@ public class Board {
      * @throws IllegalStateException if the board has already been constructed
      */
     private void fillMines() {
-        // TODO: finish method
+        // We need to generate a certain amount of random coordinates to fill with mines
+        Random random = new Random();
+
+        // We will store the coordinates as a 1D version of the cells in a hashset. Then we will remove from here at
+        // random
+        ArrayList<Integer> availableCells = new ArrayList<>();
+
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                availableCells.add(i * width + j); // Convert from 2d to 1d
+
+                // We can also take this time to actually instantiate each cell
+                cells[i][j] = new Cell();
+            }
+        }
+
+        // Keep adding mines until the amount of available cells is equal to the total minus the amount of mines we want
+        while (availableCells.size() > (width * height) - totalMines) {
+            int index = random.nextInt(availableCells.size());
+            int cellIndex = availableCells.get(index);
+            cells[cellIndex / height][cellIndex % width].makeMine();
+            availableCells.remove(index);
+        }
     }
 
     /**
@@ -145,5 +173,22 @@ public class Board {
     public boolean hasWon() {
         // TODO: finish method
         return false;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder output = new StringBuilder();
+
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if (cells[i][j].isMine())
+                    output.append("x ");
+                else
+                    output.append(cells[i][j].getNumber()).append(" ");
+            }
+            output.append("\n");
+        }
+
+        return output.toString();
     }
 }
