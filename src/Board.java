@@ -1,6 +1,6 @@
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.Deque;
 import java.util.Random;
 
 /**
@@ -61,13 +61,12 @@ public class Board {
         // We need to generate a certain amount of random coordinates to fill with mines
         Random random = new Random();
 
-        // We will store the coordinates as a 1D version of the cells in a hashset. Then we will remove from here at
-        // random
-        ArrayList<Integer> availableCells = new ArrayList<>();
+        // We will store the coordinates as a coordinate list and randomly remove from it
+        ArrayList<Coordinate> availableCells = new ArrayList<>();
 
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                availableCells.add(i * width + j); // Convert from 2d to 1d
+                availableCells.add(new Coordinate(i, j));
 
                 // We can also take this time to actually instantiate each cell
                 cells[i][j] = new Cell();
@@ -77,8 +76,9 @@ public class Board {
         // Keep adding mines until the amount of available cells is equal to the total minus the amount of mines we want
         while (availableCells.size() > (width * height) - totalMines) {
             int index = random.nextInt(availableCells.size());
-            int cellIndex = availableCells.get(index);
-            cells[cellIndex / width][cellIndex % width].makeMine();
+            Coordinate cellCoordinate = availableCells.get(index);
+
+            cells[cellCoordinate.getRow()][cellCoordinate.getCol()].makeMine();
             availableCells.remove(index);
         }
     }
@@ -122,7 +122,6 @@ public class Board {
             }
         }
 
-        // TODO: finish method
         return count;
     }
 
@@ -183,9 +182,74 @@ public class Board {
      * Reveals a certain location and all surrounding blank spots
      * @param row the row of the cell we want to reveal
      * @param col the column of the cell we want to reveal
+     * @return if the game continues or not
+     * @throws IndexOutOfBoundsException if the cell is out of bounds
      */
-    public void reveal(int row, int col) {
-        // TODO: finish method
+    public boolean reveal(int row, int col) {
+        if (row < 0 || row > height || col < 0 || col > width)
+            throw new IndexOutOfBoundsException("invalid row and col pair");
+
+        // If they hit a mine, game over
+        if (cells[row][col].isMine())
+            return false;
+        // If they hit a number, we just reveal that number and nothing else
+        else if (!cells[row][col].isBlank()) {
+            cells[row][col].reveal();
+            return true;
+        } else if (cells[row][col].isRevealed()) // If it is already revealed, do nothing
+            return true;
+
+        /* Otherwise they must have hit a blank space. In this case, we must reveal every blank space touching which
+         * can be travelled to from the current blank space while only stepping on blank spaces going up, down, right,
+         * and left. Additionally, the "coastline" of numbers must also be revealed.
+         */
+
+        // TREAT AS STACK
+        Deque<Coordinate> stack = new ArrayDeque<>();
+        cells[row][col].reveal();
+        stack.push(new Coordinate(row, col)); // Add the first one
+
+        // Keep going until we get back to the start
+        while (!stack.isEmpty()) {
+            // For every coordinate at the top of the stack, we need to reveal all number neighbors and venture to the
+            // next blank space
+            Coordinate current = stack.peek();
+            Coordinate next = new Coordinate(0, 0);
+            boolean nextFound = false;
+
+            // Check the 3x3 box around a cell
+            for (int i = -1; i <= 1; i++) {
+                for (int j = -1; j <= 1; j++) {
+                    // Make sure it's in the bounds
+                    if ( (0 <= current.getRow() + i && current.getRow() + i < height) &&
+                            (0 <= current.getCol() + j && current.getCol() + j < width) ) {
+
+                        // It is impossible for it to be a mine since it is adjacent to a blank space, so we are only
+                        // checking if it is not a blank space
+                        if (!cells[current.getRow() + i][current.getCol() + j].isBlank())
+                            cells[current.getRow() + i][current.getCol() + j].reveal(); // Reveal the number
+
+                        // If it is blank, one of the add ones is 0 (i.e. it is not a diagonal), and it isn't revealed,
+                        // and we still have not found a next coordinate
+                        else if ( (i == 0 || j == 0) && !nextFound &&
+                                !cells[current.getRow() + i][current.getCol() + j].isRevealed()) {
+
+                            next = new Coordinate(current.getRow() + i, current.getCol() + j);
+                            nextFound = true;
+                        }
+                    }
+                }
+            }
+
+            // If we found a space to go next, add it to the stack and reveal it
+            if (nextFound) {
+                stack.push(next);
+                cells[next.getRow()][next.getCol()].reveal();
+            } else // If we didn't find a place, backtrack
+                stack.pop();
+        }
+
+        return true;
     }
 
     /**
@@ -204,10 +268,13 @@ public class Board {
 
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                if (cells[i][j].isMine())
-                    output.append("x ");
+                if (cells[i][j].isRevealed())
+                    output.append(cells[i][j].getNumber());
+                else if (cells[i][j].hasFlag())
+                    output.append("!");
                 else
-                    output.append(cells[i][j].getNumber()).append(" ");
+                    output.append("#");
+                output.append(" ");
             }
             output.append("\n");
         }

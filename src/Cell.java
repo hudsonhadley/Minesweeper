@@ -58,6 +58,13 @@ public class Cell {
     }
 
     /**
+     * @return true if the cell is blank (it's number is 0)
+     */
+    public boolean isBlank() {
+        return number == 0;
+    }
+
+    /**
      * @return true if the cell is flagged
      */
     public boolean hasFlag() {
