@@ -29,6 +29,16 @@ public class Board {
      */
     private Cell[][] cells;
 
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_BLACK = "\u001B[30m";
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_PURPLE = "\u001B[35m";
+    public static final String ANSI_CYAN = "\u001B[36m";
+    public static final String ANSI_WHITE = "\u001B[37m";
+
     /**
      * Creates a board with a defined width, height, and total amount of mines.
      * @param width the width we want to assign to the board
@@ -179,6 +189,19 @@ public class Board {
     }
 
     /**
+     * @param row the row of the cell
+     * @param col the column of the cell
+     * @return true if the cell has been revealed
+     * @throws IndexOutOfBoundsException if the cell is out of bounds
+     */
+    public boolean isRevealed(int row, int col) {
+        if (row < 0 || row > height || col < 0 || col > width)
+            throw new IndexOutOfBoundsException("invalid row and col pair");
+
+        return cells[row][col].isRevealed();
+    }
+
+    /**
      * Reveals a certain location and all surrounding blank spots
      * @param row the row of the cell we want to reveal
      * @param col the column of the cell we want to reveal
@@ -190,10 +213,10 @@ public class Board {
             throw new IndexOutOfBoundsException("invalid row and col pair");
 
         // If they hit a mine, game over
-        if (cells[row][col].isMine())
+        if (cells[row][col].isMine()) {
+            cells[row][col].reveal();
             return false;
-        // If they hit a number, we just reveal that number and nothing else
-        else if (!cells[row][col].isBlank()) {
+        } else if (!cells[row][col].isBlank()) { // If they hit a number, we just reveal that number and nothing else
             cells[row][col].reveal();
             return true;
         } else if (cells[row][col].isRevealed()) // If it is already revealed, do nothing
@@ -277,15 +300,20 @@ public class Board {
 
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                if (cells[i][j].isRevealed())
-                    output.append(cells[i][j].getNumber());
+                if (cells[i][j].isRevealed() && cells[i][j].isMine())
+                    output.append(ANSI_RED + "X" + ANSI_RED);
+                else if (cells[i][j].isRevealed() && !cells[i][j].isMine())
+                    if (cells[i][j].isBlank())
+                        output.append(ANSI_WHITE).append(cells[i][j].getNumber()).append(ANSI_WHITE);
+                    else
+                        output.append(ANSI_YELLOW).append(cells[i][j].getNumber()).append(ANSI_YELLOW);
                 else if (cells[i][j].hasFlag())
-                    output.append("!");
+                    output.append(ANSI_GREEN + "!" + ANSI_GREEN);
                 else
-                    output.append("#");
+                    output.append(ANSI_BLUE).append("#").append(ANSI_BLUE);
                 output.append(" ");
             }
-            output.append("\n");
+            output.append(ANSI_RESET).append("\n").append(ANSI_RESET);
         }
 
         return output.toString();
