@@ -48,7 +48,7 @@ public class Board {
      * @throws IllegalArgumentException if totalMines is greater than the total amount of cells (width x height)
      * @throws NegativeArraySizeException if the width or height is negative
      */
-    public Board(int width, int height, int totalMines) {
+    public Board(int width, int height, int totalMines) throws IllegalArgumentException, NegativeArraySizeException {
         if (width < 0 || height < 0)
             throw new NegativeArraySizeException("width and height must be non-negative");
         else if (totalMines > width * height)
@@ -68,7 +68,7 @@ public class Board {
      * Fills the board with the desired amount of mines
      * @throws IllegalStateException if the board has already been constructed
      */
-    private void fillMines() {
+    private void fillMines() throws IllegalStateException {
         // We need to generate a certain amount of random coordinates to fill with mines
         Random random = new Random();
 
@@ -99,7 +99,7 @@ public class Board {
      * their neighbors are mines.
      * @throws IllegalStateException if the board has already been constructed
      */
-    private void updateCells() {
+    private void updateCells() throws IllegalStateException {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 if (!cells[i][j].isMine())
@@ -115,7 +115,7 @@ public class Board {
      * @return the number of mines neighboring the cell
      * @throws IndexOutOfBoundsException if the cell is out of bounds
      */
-    private int getNeighborCount(int row, int col) {
+    private int getNeighborCount(int row, int col) throws IndexOutOfBoundsException {
         if (row < 0 || row > height || col < 0 || col > width)
             throw new IndexOutOfBoundsException("invalid row and col pair");
 
@@ -157,7 +157,7 @@ public class Board {
      * @return true if the cell is a mine
      * @throws IndexOutOfBoundsException if the cell is out of bounds
      */
-    public boolean isMine(int row, int col) {
+    public boolean isMine(int row, int col) throws IndexOutOfBoundsException {
         if (row < 0 || row > height || col < 0 || col > width)
             throw new IndexOutOfBoundsException("invalid row and col pair");
         return cells[row][col].isMine();
@@ -169,7 +169,7 @@ public class Board {
      * @param col the column of the cell
      * @throws IndexOutOfBoundsException if the cell is out of bounds
      */
-    public void flag(int row, int col) {
+    public void flag(int row, int col) throws IndexOutOfBoundsException {
         if (row < 0 || row > height || col < 0 || col > width)
             throw new IndexOutOfBoundsException("invalid row and col pair");
 
@@ -187,7 +187,7 @@ public class Board {
      * @return true if the cell has a flag
      * @throws IndexOutOfBoundsException if the cell is out of bounds
      */
-    public boolean hasFlag(int row, int col) {
+    public boolean hasFlag(int row, int col) throws IndexOutOfBoundsException {
         if (row < 0 || row > height || col < 0 || col > width)
             throw new IndexOutOfBoundsException("invalid row and col pair");
 
@@ -200,7 +200,7 @@ public class Board {
      * @return true if the cell has been revealed
      * @throws IndexOutOfBoundsException if the cell is out of bounds
      */
-    public boolean isRevealed(int row, int col) {
+    public boolean isRevealed(int row, int col) throws IndexOutOfBoundsException {
         if (row < 0 || row > height || col < 0 || col > width)
             throw new IndexOutOfBoundsException("invalid row and col pair");
 
@@ -213,10 +213,13 @@ public class Board {
      * @param col the column of the cell we want to reveal
      * @return if the game continues or not
      * @throws IndexOutOfBoundsException if the cell is out of bounds
+     * @throws IllegalArgumentException if the cell is flagged
      */
-    public boolean reveal(int row, int col) {
+    public boolean reveal(int row, int col) throws IndexOutOfBoundsException, IllegalArgumentException {
         if (row < 0 || row > height || col < 0 || col > width)
             throw new IndexOutOfBoundsException("invalid row and col pair");
+        else if (hasFlag(row, col))
+            throw new IllegalArgumentException("Cell is flagged");
 
         // If they hit a mine, game over
         if (cells[row][col].isMine()) {

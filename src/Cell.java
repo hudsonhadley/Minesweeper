@@ -87,8 +87,11 @@ public class Cell {
 
     /**
      * If the cell is not already revealed, it set the isRevealed variable to true.
+     * @throws IllegalStateException if the cell is flagged
      */
     public void reveal() {
+        if (hasFlag())
+            throw new IllegalStateException("Cell is flagged");
         isRevealed = true;
     }
 }
