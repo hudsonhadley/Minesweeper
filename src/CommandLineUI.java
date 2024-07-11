@@ -58,15 +58,18 @@ public class CommandLineUI {
             System.out.print("Flagging? (y/n): ");
 
             while (true) {
-                char answer = inScanner.nextLine().toLowerCase().charAt(0);
+                try {
+                    char answer = inScanner.nextLine().toLowerCase().charAt(0);
 
-                if (answer == 'y') {
-                    flagging = true;
-                    break;
-                } else if (answer == 'n') {
-                    flagging = false;
-                    break;
-                }
+
+                    if (answer == 'y') {
+                        flagging = true;
+                        break;
+                    } else if (answer == 'n') {
+                        flagging = false;
+                        break;
+                    }
+                } catch (Exception ignore) {}
             }
 
             int row = getNumber(inScanner, "Enter a row: ", 1, board.getHeight());
@@ -93,8 +96,19 @@ public class CommandLineUI {
 
         System.out.println(board);
 
-        if (hitMine)
+        if (hitMine) {
             System.out.println("Hit mine!");
+
+            // If we hit a mine, reveal all the mines and print the board once again
+            for (int i = 0; i < board.getHeight(); i++) {
+                for (int j = 0; j < board.getWidth(); j++) {
+                    if (board.isMine(i, j))
+                        board.reveal(i, j);
+                }
+            }
+
+            System.out.println(board);
+        }
         else
             System.out.println("Minefield cleared!");
     }

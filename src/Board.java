@@ -28,16 +28,17 @@ public class Board {
      * A 2D array of Cells which describes the current board state
      */
     private Cell[][] cells;
+    /**
+     * The amount of flags on the board
+     */
+    private int flagCount;
 
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_BLACK = "\u001B[30m";
-    public static final String ANSI_RED = "\u001B[31m";
-    public static final String ANSI_GREEN = "\u001B[32m";
-    public static final String ANSI_YELLOW = "\u001B[33m";
-    public static final String ANSI_BLUE = "\u001B[34m";
-    public static final String ANSI_PURPLE = "\u001B[35m";
-    public static final String ANSI_CYAN = "\u001B[36m";
-    public static final String ANSI_WHITE = "\u001B[37m";
+    private static final String ANSI_RESET = "\u001B[0m";
+    private static final String ANSI_BLACK = "\u001B[30m";
+    private static final String ANSI_RED = "\u001B[31m";
+    private static final String ANSI_YELLOW = "\u001B[33m";
+    private static final String ANSI_BLUE = "\u001B[34m";
+    private static final String ANSI_WHITE = "\u001B[37m";
 
     /**
      * Creates a board with a defined width, height, and total amount of mines.
@@ -172,6 +173,11 @@ public class Board {
         if (row < 0 || row > height || col < 0 || col > width)
             throw new IndexOutOfBoundsException("invalid row and col pair");
 
+        if (hasFlag(row, col))
+            flagCount--;
+        else
+            flagCount++;
+
         cells[row][col].flag();
     }
 
@@ -252,9 +258,9 @@ public class Board {
                         if (!cells[current.getRow() + i][current.getCol() + j].isBlank())
                             cells[current.getRow() + i][current.getCol() + j].reveal(); // Reveal the number
 
-                        // If it is blank, one of the add ones is 0 (i.e. it is not a diagonal), and it isn't revealed,
+                        // If it is blank, and it isn't revealed,
                         // and we still have not found a next coordinate
-                        else if ( (i == 0 || j == 0) && !nextFound &&
+                        else if (!nextFound &&
                                 !cells[current.getRow() + i][current.getCol() + j].isRevealed()) {
 
                             next = new Coordinate(current.getRow() + i, current.getCol() + j);
@@ -297,18 +303,19 @@ public class Board {
     @Override
     public String toString() {
         StringBuilder output = new StringBuilder();
+        output.append("Mines left: ").append(totalMines - flagCount).append("\n\n");
 
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 if (cells[i][j].isRevealed() && cells[i][j].isMine())
-                    output.append(ANSI_RED + "X" + ANSI_RED);
+                    output.append(ANSI_BLACK + "X" + ANSI_BLACK);
                 else if (cells[i][j].isRevealed() && !cells[i][j].isMine())
                     if (cells[i][j].isBlank())
                         output.append(ANSI_WHITE).append(cells[i][j].getNumber()).append(ANSI_WHITE);
                     else
                         output.append(ANSI_YELLOW).append(cells[i][j].getNumber()).append(ANSI_YELLOW);
                 else if (cells[i][j].hasFlag())
-                    output.append(ANSI_GREEN + "!" + ANSI_GREEN);
+                    output.append(ANSI_RED + "!" + ANSI_RED);
                 else
                     output.append(ANSI_BLUE).append("#").append(ANSI_BLUE);
                 output.append(" ");
