@@ -282,18 +282,15 @@ public class Board {
     }
 
     /**
-     * A game is won if the board is completely flagged properly. If every cell that has a mine also has a flag, and
-     * every cell which does not have a mine has been uncovered, the game is won.
+     * A game is won if the board is cleared of any non-mine cells. If every cell that isn't a mine has been revealed
+     * then the game is won.
      * @return true if the board is completed and the game is won
      */
     public boolean hasWon() {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                // If it is a mine and doesn't have a flag, the game isn't won
-                if (cells[i][j].isMine() && !cells[i][j].hasFlag())
-                    return false;
-                // If it isn't a mine and it isn't revealed, the game isn't won
-                else if (!cells[i][j].isMine() && !cells[i][j].isRevealed())
+                // If it isn't a mine, and it isn't revealed, the game isn't won
+                if (!cells[i][j].isMine() && !cells[i][j].isRevealed())
                     return false;
             }
         }

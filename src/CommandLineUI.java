@@ -51,7 +51,7 @@ public class CommandLineUI {
 
 
         boolean hitMine = false;
-        boolean flagging = false;
+        boolean flagging;
         while (!board.hasWon()) {
             System.out.println(board);
 
