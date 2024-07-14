@@ -42,6 +42,21 @@ public class GUI {
     private static final Font DEFAULT_FONT = new Font("Dialog.bold", Font.PLAIN, 15);
 
     /**
+     * The color used by each number (note that index 0 is not used since no number is shown for a blank space)
+     */
+    private static final Color[] NUMBER_COLORS = new Color[]{
+           new Color(0, 0, 0), // 0
+           new Color(12, 183, 224), // 1
+           new Color(127, 206, 90), // 2
+           new Color(225, 101, 101), // 3
+           new Color(207, 88, 222), // 4
+           new Color(253, 148, 113), // 5
+           new Color(2, 33, 103), // 6
+           new Color(22, 65, 1), // 7
+           new Color(155, 155, 61), // 8
+    };
+
+    /**
      * A map from difficulty level to size
      */
     private static final int[][] SIZES = new int[][] {{9, 9, 10}, {16, 16, 40}, {30, 16, 99}};
@@ -353,7 +368,7 @@ public class GUI {
                         // If it has a number, set it
                     } else {
                         buttons[i][j].setText("" + gameBoard.getNumber(i, j));
-                        buttons[i][j].setForeground(Color.DARK_GRAY);
+                        buttons[i][j].setForeground(NUMBER_COLORS[gameBoard.getNumber(i, j)]);
                         buttons[i][j].setBackground(Color.WHITE);
                     }
 
