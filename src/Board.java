@@ -300,6 +300,31 @@ public class Board {
         return true;
     }
 
+    /**
+     * @param row the row of the cell we want
+     * @param col the col of the cell we want
+     * @return the number of the cell
+     * @throws IllegalArgumentException if the cell is a mine
+     * @throws IndexOutOfBoundsException if the cell is out of bounds
+     */
+    public int getNumber(int row, int col) throws IllegalArgumentException, IndexOutOfBoundsException {
+        if (row < 0 || row > height || col < 0 || col > width)
+            throw new IndexOutOfBoundsException("Cell is out of bounds");
+        else if (cells[row][col].isMine())
+            throw new IllegalArgumentException("Cell is a mine");
+
+        return cells[row][col].getNumber();
+    }
+
+    /**
+     * @param row
+     * @param col
+     * @return
+     */
+    public boolean isBlank(int row, int col) {
+        return cells[row][col].isBlank();
+    }
+
     @Override
     public String toString() {
         StringBuilder output = new StringBuilder();
