@@ -195,6 +195,7 @@ public class GUI {
             throw new IllegalArgumentException("Invalid difficulty");
 
         flagCount = 0;
+        hitMine = false;
 
         // Make a new panel
         JPanel gamePanel = new JPanel();
@@ -221,49 +222,79 @@ public class GUI {
         if (difficulty < 0 || difficulty > 2)
             throw new IllegalArgumentException("Invalid difficulty");
 
+        int strutWidth = 50;
+        int labelWidth = (frame.getWidth() - 3 * strutWidth) / 4 + 100;
+        int buttonWidth = (frame.getWidth() - 3 * strutWidth) / 4 - 100;
+
 
         /* For the width at the top we will use the space as follows:
          *      1. 50 for spacing
-         *      2. total / 3 + 50 for the flagCount
-         *      3. total / 3 - 200 for the menu button
-         *      4. total / 3 + 50 for the timer
+         *      2. (width - 150) / 4 + 100 for the flagCount
+         *      3. (width - 150) / 4 - 100 for the menu button
+         *      4. 50 for spacing
+         *      5. (width - 150) / 4 - 100 for the retry button
+         *      4. (width - 150) / 4 + 100 for the timer
          *      5. 50 for spacing
          */
 
         JPanel topOfBoard = new JPanel();
         topOfBoard.setMaximumSize(new Dimension(frame.getWidth(), 60));
         topOfBoard.setLayout(new BoxLayout(topOfBoard, BoxLayout.LINE_AXIS));
+        topOfBoard.setBackground(Color.LIGHT_GRAY);
 
-        topOfBoard.add(Box.createHorizontalStrut(50));
 
+        // Add a gap
+        topOfBoard.add(Box.createHorizontalStrut(strutWidth));
+
+        // Add the score
         JLabel scoreLabel = new JLabel("" + (SIZES[difficulty][2] - flagCount), JLabel.LEFT);
-        scoreLabel.setMaximumSize(new Dimension(frame.getWidth() / 3 + 50, 60));
+        scoreLabel.setMaximumSize(new Dimension(labelWidth, 60));
         scoreLabel.setFont(DEFAULT_FONT);
+        scoreLabel.setForeground(Color.BLACK);
         topOfBoard.add(scoreLabel);
 
+        // Add the menu button
         JButton menuButton = new JButton("Menu");
-        menuButton.setMaximumSize(new Dimension(frame.getWidth() / 3 - 200, 60));
+        menuButton.setMaximumSize(new Dimension(buttonWidth, 60));
         menuButton.setFont(DEFAULT_FONT);
+        menuButton.setForeground(Color.BLACK);
         menuButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 CardLayout cl = (CardLayout) cards.getLayout();
                 cl.first(cards);
-                hitMine = false;
             }
         });
         topOfBoard.add(menuButton);
 
+        // Add a gap
+        topOfBoard.add(Box.createHorizontalStrut(strutWidth));
+
+        // Add the retry button
+        JButton retryButton = new JButton("Retry");
+        retryButton.setMaximumSize(new Dimension(buttonWidth, 60));
+        retryButton.setFont(DEFAULT_FONT);
+        retryButton.setForeground(Color.BLACK);
+        retryButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                createBoard(difficulty);
+            }
+        });
+        topOfBoard.add(retryButton);
+
 //        topOfBoard.add(Box.createHorizontalStrut(200));
 
-        startTime = System.currentTimeMillis();
+        // Add the timer
 
+        startTime = System.currentTimeMillis(); // Keep track of when the timer is initialized
         JLabel timeLabel = new JLabel("0", JLabel.RIGHT);
-        timeLabel.setMaximumSize(new Dimension(frame.getWidth() / 3 + 50, 60));
+        timeLabel.setMaximumSize(new Dimension(labelWidth, 60));
         timeLabel.setFont(DEFAULT_FONT);
+        timeLabel.setForeground(Color.BLACK);
         topOfBoard.add(timeLabel);
 
-        // We have to initialize it first so we can use it in the ActionListener
+        // We have to initialize it first, so we can use it in the ActionListener
         Timer timer = new Timer(200, null);
         timer.addActionListener(new ActionListener() {
             // Every second the time will update the JLabels on the top of the board
@@ -386,6 +417,7 @@ public class GUI {
      */
     private static JPanel makeBottomPanel(int difficulty) {
         JPanel bottomPanel = new JPanel();
+        bottomPanel.setBackground(Color.LIGHT_GRAY);
         bottomPanel.setLayout(new FlowLayout());
         bottomPanel.add(makeGamePanel(difficulty));
 
