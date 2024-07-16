@@ -228,11 +228,14 @@ public class GUI {
 
         startTime = System.currentTimeMillis();
 
-        JLabel timeLabel = new JLabel("0");
-        timeLabel.setMaximumSize(new Dimension(100, 60));
+        JLabel timeLabel = new JLabel("0", JLabel.RIGHT);
+        timeLabel.setMaximumSize(new Dimension(200, 60));
         timeLabel.setFont(DEFAULT_FONT);
         topOfBoard.add(timeLabel);
-        Timer timer = new Timer(200, new ActionListener() {
+
+        // We have to initialize it first so we can use it in the ActionListener
+        Timer timer = new Timer(200, null);
+        timer.addActionListener(new ActionListener() {
             // Every second the time will update the JLabels on the top of the board
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -243,6 +246,15 @@ public class GUI {
 
                 // Update flag count
                 scoreLabel.setText("" + (SIZES[difficulty][2] - flagCount) );
+
+                // If the game is over, stop the timer
+                if (gameBoard.hasWon()) {
+                    timeLabel.setText("Minefield cleared :)   " + elapsed / 1000);
+                    timer.stop();
+                } else if (hitMine) {
+                    timeLabel.setText("Mine hit :(   " + elapsed / 1000);
+                    timer.stop();
+                }
             }
         });
         timer.start();
@@ -281,8 +293,12 @@ public class GUI {
 
                 buttons[i][j].addMouseListener(new MouseListener() {
                     @Override
-                    public void mouseClicked(MouseEvent e) {
-                        // If we have already hit a mine, do nothing
+                    public void mouseClicked(MouseEvent e) {}
+                    @Override
+                    public void mousePressed(MouseEvent e) {}
+                    @Override
+                    public void mouseReleased(MouseEvent e) { // Once the mouse is released, an action will trigger
+                        // If the game is over, do nothing
                         if (hitMine || gameBoard.hasWon())
                             return;
 
@@ -322,12 +338,6 @@ public class GUI {
 
                         System.out.println(gameBoard);
                     }
-
-                    // We will do nothing if we register a 'non-click' event such as a press or release
-                    @Override
-                    public void mousePressed(MouseEvent e) {}
-                    @Override
-                    public void mouseReleased(MouseEvent e) {}
                     @Override
                     public void mouseEntered(MouseEvent e) {}
                     @Override

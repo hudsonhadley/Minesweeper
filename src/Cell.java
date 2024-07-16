@@ -94,4 +94,15 @@ public class Cell {
             throw new IllegalStateException("Cell is flagged");
         isRevealed = true;
     }
+
+    /**
+     * If the cell is not already revealed (even if it has a flag), it is revealed
+     * @param ignoreFlag if we want to ignore the flag
+     */
+    public void reveal(boolean ignoreFlag) {
+        if (ignoreFlag)
+            isRevealed = true;
+        else
+            reveal(); // If we don't want to ignore the flag, reveal as normal
+    }
 }

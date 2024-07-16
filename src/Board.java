@@ -259,7 +259,7 @@ public class Board {
                         // It is impossible for it to be a mine since it is adjacent to a blank space, so we are only
                         // checking if it is not a blank space
                         if (!cells[current.getRow() + i][current.getCol() + j].isBlank())
-                            cells[current.getRow() + i][current.getCol() + j].reveal(); // Reveal the number
+                            cells[current.getRow() + i][current.getCol() + j].reveal(true); // Reveal the number
 
                         // If it is blank, and it isn't revealed,
                         // and we still have not found a next coordinate
@@ -276,7 +276,7 @@ public class Board {
             // If we found a space to go next, add it to the stack and reveal it
             if (nextFound) {
                 stack.push(next);
-                cells[next.getRow()][next.getCol()].reveal();
+                cells[next.getRow()][next.getCol()].reveal(true);
             } else // If we didn't find a place, backtrack
                 stack.pop();
         }
