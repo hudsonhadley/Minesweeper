@@ -92,19 +92,36 @@ public class GUI {
      */
     private static void createMenu() {
         int widthOfButtons = 130;
-        int heightOfButtons = 50;
-        int heightOfStruts = 20;
+        int heightOfButtons = 60;
+        int heightOfStruts = 30;
 
         JPanel menuPanel = new JPanel();
         menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.PAGE_AXIS));
-        menuPanel.setBackground(Color.DARK_GRAY);
+        menuPanel.setBackground(Color.LIGHT_GRAY);
         menuPanel.setVisible(true);
 
-        menuPanel.add(Box.createVerticalStrut(heightOfStruts));
+        /* The menu will have three buttons: beginner, intermediate, and expert. We will divide up the screen in height
+         * as follows:
+         *      1. (height - 260) / 2 - 25 for spacing
+         *      2. 50 for description
+         *      3. 50 for beginner button
+         *      4. 30 for spacing
+         *      5. 50 for intermediate button
+         *      6. 30 for spacing
+         *      7. 50 for expert button
+         *      8. (height - 260) / 2 + 25 for spacing
+         */
 
-        JLabel descriptionLabel = new JLabel("Select Difficulty");
+
+        // Add the appropriate amount so that the intermediate button is centered
+        menuPanel.add(Box.createVerticalStrut(
+                ((frame.getHeight() - (4 * heightOfButtons) - (2 * heightOfStruts)) / 2)
+                        - (heightOfButtons / 2)
+        ));
+
+        JLabel descriptionLabel = new JLabel("Select Difficulty", JLabel.CENTER);
         descriptionLabel.setFont(DEFAULT_FONT);
-        descriptionLabel.setForeground(Color.LIGHT_GRAY);
+        descriptionLabel.setForeground(Color.BLACK);
 
         descriptionLabel.setMaximumSize(new Dimension(widthOfButtons, heightOfButtons));
         descriptionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -159,6 +176,12 @@ public class GUI {
 
         menuPanel.add(expertButton);
 
+        // Add the appropriate amount so that the intermediate button is centered
+        menuPanel.add(Box.createVerticalStrut(
+                ((frame.getHeight() - (4 * heightOfButtons) - (2 * heightOfStruts)) / 2)
+                        + (heightOfButtons / 2)
+        ));
+
         cards.add(menuPanel);
     }
 
@@ -175,12 +198,12 @@ public class GUI {
 
         // Make a new panel
         JPanel gamePanel = new JPanel();
-        gamePanel.setLayout(new BorderLayout(0, 0));
-        gamePanel.setBackground(Color.DARK_GRAY);
+        gamePanel.setLayout(new BorderLayout());
+        gamePanel.setBackground(Color.LIGHT_GRAY);
 
         // Our game panel will have two sections: (1) the top of the screen and (2) the area where the game is played
         gamePanel.add(makeTopPanel(difficulty), BorderLayout.PAGE_START);
-        gamePanel.add(makeGamePanel(difficulty), BorderLayout.CENTER);
+        gamePanel.add(makeBottomPanel(difficulty), BorderLayout.CENTER);
 
         // Add the panel to the cards and switch to it from the layout manager
         cards.add(gamePanel);
@@ -198,21 +221,28 @@ public class GUI {
         if (difficulty < 0 || difficulty > 2)
             throw new IllegalArgumentException("Invalid difficulty");
 
+
+        /* For the width at the top we will use the space as follows:
+         *      1. 50 for spacing
+         *      2. total / 3 + 50 for the flagCount
+         *      3. total / 3 - 200 for the menu button
+         *      4. total / 3 + 50 for the timer
+         *      5. 50 for spacing
+         */
+
         JPanel topOfBoard = new JPanel();
-        topOfBoard.setMaximumSize(new Dimension(frame.getWidth(), frame.getHeight() - 60));
+        topOfBoard.setMaximumSize(new Dimension(frame.getWidth(), 60));
         topOfBoard.setLayout(new BoxLayout(topOfBoard, BoxLayout.LINE_AXIS));
 
         topOfBoard.add(Box.createHorizontalStrut(50));
 
-        JLabel scoreLabel = new JLabel("" + (SIZES[difficulty][2] - flagCount) );
-        scoreLabel.setMaximumSize(new Dimension(100, 60));
+        JLabel scoreLabel = new JLabel("" + (SIZES[difficulty][2] - flagCount), JLabel.LEFT);
+        scoreLabel.setMaximumSize(new Dimension(frame.getWidth() / 3 + 50, 60));
         scoreLabel.setFont(DEFAULT_FONT);
         topOfBoard.add(scoreLabel);
 
-        topOfBoard.add(Box.createHorizontalStrut(200));
-
         JButton menuButton = new JButton("Menu");
-        menuButton.setMaximumSize(new Dimension(100, 60));
+        menuButton.setMaximumSize(new Dimension(frame.getWidth() / 3 - 200, 60));
         menuButton.setFont(DEFAULT_FONT);
         menuButton.addActionListener(new ActionListener() {
             @Override
@@ -224,12 +254,12 @@ public class GUI {
         });
         topOfBoard.add(menuButton);
 
-        topOfBoard.add(Box.createHorizontalStrut(200));
+//        topOfBoard.add(Box.createHorizontalStrut(200));
 
         startTime = System.currentTimeMillis();
 
         JLabel timeLabel = new JLabel("0", JLabel.RIGHT);
-        timeLabel.setMaximumSize(new Dimension(200, 60));
+        timeLabel.setMaximumSize(new Dimension(frame.getWidth() / 3 + 50, 60));
         timeLabel.setFont(DEFAULT_FONT);
         topOfBoard.add(timeLabel);
 
@@ -259,6 +289,8 @@ public class GUI {
         });
         timer.start();
 
+        topOfBoard.add(Box.createHorizontalStrut(50));
+
         return topOfBoard;
     }
 
@@ -277,9 +309,6 @@ public class GUI {
 
         // For the game board we will create a panel
         JPanel gamePanel = new JPanel();
-        gamePanel.setPreferredSize(new Dimension(SIZES[difficulty][0] * CELL_SIZE,
-                                              SIZES[difficulty][1] * CELL_SIZE));
-
         gamePanel.setLayout(new GridLayout(gameBoard.getHeight(), gameBoard.getWidth()));
 
         // Initialize all the buttons
@@ -288,7 +317,7 @@ public class GUI {
         for (int i = 0; i < gameBoard.getHeight(); i++) {
             for (int j = 0; j < gameBoard.getWidth(); j++) {
                 buttons[i][j] = new CellButton(i, j);
-                buttons[i][j].setMaximumSize(new Dimension(CELL_SIZE, CELL_SIZE));
+                buttons[i][j].setPreferredSize(new Dimension(CELL_SIZE, CELL_SIZE));
                 buttons[i][j].setMargin(new Insets(0, 0, 0, 0));
 
                 buttons[i][j].addMouseListener(new MouseListener() {
@@ -349,6 +378,18 @@ public class GUI {
         }
 
         return gamePanel;
+    }
+
+    /**
+     * Creates the bottom panel with the game panel on it
+     * @param difficulty the difficulty of the game
+     */
+    private static JPanel makeBottomPanel(int difficulty) {
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new FlowLayout());
+        bottomPanel.add(makeGamePanel(difficulty));
+
+        return bottomPanel;
     }
 
     /**
