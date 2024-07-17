@@ -116,7 +116,7 @@ public class Board {
      * @throws IndexOutOfBoundsException if the cell is out of bounds
      */
     private int getNeighborCount(int row, int col) throws IndexOutOfBoundsException {
-        if (row < 0 || row > height || col < 0 || col > width)
+        if (row < 0 || row >= height || col < 0 || col >= width)
             throw new IndexOutOfBoundsException("invalid row and col pair");
 
         int count = 0;
@@ -158,7 +158,7 @@ public class Board {
      * @throws IndexOutOfBoundsException if the cell is out of bounds
      */
     public boolean isMine(int row, int col) throws IndexOutOfBoundsException {
-        if (row < 0 || row > height || col < 0 || col > width)
+        if (row < 0 || row >= height || col < 0 || col >= width)
             throw new IndexOutOfBoundsException("invalid row and col pair");
         return cells[row][col].isMine();
     }
@@ -170,7 +170,7 @@ public class Board {
      * @throws IndexOutOfBoundsException if the cell is out of bounds
      */
     public void flag(int row, int col) throws IndexOutOfBoundsException {
-        if (row < 0 || row > height || col < 0 || col > width)
+        if (row < 0 || row >= height || col < 0 || col >= width)
             throw new IndexOutOfBoundsException("invalid row and col pair");
 
         if (hasFlag(row, col))
@@ -188,7 +188,7 @@ public class Board {
      * @throws IndexOutOfBoundsException if the cell is out of bounds
      */
     public boolean hasFlag(int row, int col) throws IndexOutOfBoundsException {
-        if (row < 0 || row > height || col < 0 || col > width)
+        if (row < 0 || row >= height || col < 0 || col >= width)
             throw new IndexOutOfBoundsException("invalid row and col pair");
 
         return cells[row][col].hasFlag();
@@ -201,7 +201,7 @@ public class Board {
      * @throws IndexOutOfBoundsException if the cell is out of bounds
      */
     public boolean isRevealed(int row, int col) throws IndexOutOfBoundsException {
-        if (row < 0 || row > height || col < 0 || col > width)
+        if (row < 0 || row >= height || col < 0 || col >= width)
             throw new IndexOutOfBoundsException("invalid row and col pair");
 
         return cells[row][col].isRevealed();
@@ -216,7 +216,7 @@ public class Board {
      * @throws IllegalArgumentException if the cell is flagged
      */
     public boolean reveal(int row, int col) throws IndexOutOfBoundsException, IllegalArgumentException {
-        if (row < 0 || row > height || col < 0 || col > width)
+        if (row < 0 || row >= height || col < 0 || col >= width)
             throw new IndexOutOfBoundsException("invalid row and col pair");
         else if (hasFlag(row, col))
             throw new IllegalArgumentException("Cell is flagged");
@@ -308,7 +308,7 @@ public class Board {
      * @throws IndexOutOfBoundsException if the cell is out of bounds
      */
     public int getNumber(int row, int col) throws IllegalArgumentException, IndexOutOfBoundsException {
-        if (row < 0 || row > height || col < 0 || col > width)
+        if (row < 0 || row >= height || col < 0 || col >= width)
             throw new IndexOutOfBoundsException("Cell is out of bounds");
         else if (cells[row][col].isMine())
             throw new IllegalArgumentException("Cell is a mine");
