@@ -283,8 +283,6 @@ public class GUI {
         });
         topOfBoard.add(retryButton);
 
-//        topOfBoard.add(Box.createHorizontalStrut(200));
-
         // Add the timer
 
         startTime = System.currentTimeMillis(); // Keep track of when the timer is initialized
@@ -350,6 +348,7 @@ public class GUI {
                 buttons[i][j] = new CellButton(i, j);
                 buttons[i][j].setPreferredSize(new Dimension(CELL_SIZE, CELL_SIZE));
                 buttons[i][j].setMargin(new Insets(0, 0, 0, 0));
+                buttons[i][j].setBackground(Color.DARK_GRAY);
 
                 buttons[i][j].addMouseListener(new MouseListener() {
                     @Override
