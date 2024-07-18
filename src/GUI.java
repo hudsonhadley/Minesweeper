@@ -39,8 +39,12 @@ public class GUI {
     /**
      * The default font we will use
      */
-    private static final Font DEFAULT_FONT = new Font("Dialog.bold", Font.PLAIN, 15);
+    private static final Font DEFAULT_FONT = new Font("Dialog", Font.BOLD, 15);
 
+    /**
+     * The font of the numbers
+     */
+    private static final Font NUMBER_FONT = new Font("TimesNewRoman", Font.BOLD,15);
     /**
      * The color used by each number (note that index 0 is not used since no number is shown for a blank space)
      */
@@ -70,6 +74,16 @@ public class GUI {
      * Stores the start time and is updated as necessary when the game resets
      */
     private static long startTime;
+
+    /**
+     * The image of the flag
+     */
+    private static final ImageIcon FLAG_IMAGE = new ImageIcon("images/flag.png");
+
+    /**
+     * The image of the mine
+     */
+    private static final ImageIcon MINE_IMAGE = new ImageIcon("images/mine.png");
 
     /**
      * Makes the GUI and shows it
@@ -374,17 +388,8 @@ public class GUI {
                             }
 
                             // If it is a mine (NOT ELSE IF)
-                            if (gameBoard.isMine(row, col) && !gameBoard.hasFlag(row, col)) {
+                            if (gameBoard.isMine(row, col) && !gameBoard.hasFlag(row, col))
                                 hitMine = true;
-
-                                // Reveal all the mines
-                                for (int k = 0; k < gameBoard.getHeight(); k++) {
-                                    for (int l = 0; l < gameBoard.getWidth(); l++) {
-                                        if (gameBoard.isMine(k, l) && !gameBoard.hasFlag(k, l))
-                                            gameBoard.reveal(k, l);
-                                    }
-                                }
-                            }
 
                         } else if (e.getButton() == MouseEvent.BUTTON3) { // If the right mouse button is clicked
 
@@ -392,8 +397,15 @@ public class GUI {
                             if (!gameBoard.isRevealed(row, col))
                                 gameBoard.flag(row, col);
                         }
-                        // Update the board accordingly
-                        updateBoard();
+
+                        // After we click we need to update the board on the screen
+
+                        // If we hit a mine, we want to highlight the incorrect things
+                        if (hitMine) {
+                            revealEndGame(row, col);
+                        } else { // Otherwise we just want to update the board normally
+                            updateBoard();
+                        }
 
                         System.out.println(gameBoard);
                     }
@@ -408,6 +420,41 @@ public class GUI {
         }
 
         return gamePanel;
+    }
+
+    /**
+     * Reveals all the mines, highlighting the mine that was hit as well as incorrect
+     * @param row the row of the cell that was hit
+     * @param col the column of the cell that was hit
+     * @throws IndexOutOfBoundsException if row or col is out of bounds
+     */
+    private static void revealEndGame(int row, int col) throws IndexOutOfBoundsException {
+        if (row < 0 || row >= gameBoard.getHeight() || col < 0 || col >= gameBoard.getWidth())
+            throw new IndexOutOfBoundsException("Cell invalid");
+
+        // Go through all the cells revealing the mines and highlighting the incorrect flags
+        for (int i = 0; i < gameBoard.getHeight(); i++) {
+            for (int j = 0; j < gameBoard.getWidth(); j++) {
+                // There are 3 things we are looking for
+                // 1. The mine that we hit -- red it and reveal it
+                // 2. A mine without a flag -- reveal it
+                // 3. An incorrect flag -- red it
+
+                if (gameBoard.isMine(i, j)) {
+                    // If it is the one we hit
+                    if (i == row && j == col) {
+                        buttons[i][j].setIcon(MINE_IMAGE);
+                        buttons[i][j].setBackground(Color.RED);
+                    } else if (!gameBoard.hasFlag(i, j)) {
+                        buttons[i][j].setIcon(MINE_IMAGE);
+                        buttons[i][j].setBackground(Color.WHITE);
+                    }
+
+                } else if (gameBoard.hasFlag(i, j)) {
+                    buttons[i][j].setBackground(Color.RED);
+                }
+            }
+        }
     }
 
     /**
@@ -439,32 +486,32 @@ public class GUI {
                     // If it's blank make it white
                     if (gameBoard.isBlank(i, j)) {
                         buttons[i][j].setText("");
+                        buttons[i][j].setIcon(null); // Clear the image
                         buttons[i][j].setBackground(Color.WHITE);
 
-                        // If it's a mine make a black X
+                        // If it's a mine, put the image on
                     } else if (gameBoard.isMine(i, j)) {
-                        buttons[i][j].setText("X");
-                        buttons[i][j].setForeground(Color.BLACK);
+                        buttons[i][j].setIcon(MINE_IMAGE);
+
                         buttons[i][j].setBackground(Color.WHITE);
 
                         // If it has a number, set it
                     } else {
                         buttons[i][j].setText("" + gameBoard.getNumber(i, j));
+                        buttons[i][j].setFont(NUMBER_FONT);
                         buttons[i][j].setForeground(NUMBER_COLORS[gameBoard.getNumber(i, j)]);
                         buttons[i][j].setBackground(Color.WHITE);
                     }
 
-                    // If it has a flag, do a red !
+                    // If it has a flag, put the image on
                 } else if (gameBoard.hasFlag(i, j)) {
-                    buttons[i][j].setText("!");
-                    buttons[i][j].setForeground(Color.RED);
+                    buttons[i][j].setIcon(FLAG_IMAGE);
 
                     flagCount++;
                 } else {
                     buttons[i][j].setText("");
+                    buttons[i][j].setIcon(null);
                 }
-
-                buttons[i][j].setFont(DEFAULT_FONT);
             }
         }
     }
