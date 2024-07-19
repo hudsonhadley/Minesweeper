@@ -78,17 +78,18 @@ public class GUI {
     /**
      * The image of the flag
      */
-    private static final ImageIcon FLAG_IMAGE = new ImageIcon("images/flag.png");
+    private static final ImageIcon FLAG_IMAGE = new ImageIcon(System.getProperty("java.class.path") + "/../../../images/flag.png");
 
     /**
      * The image of the mine
      */
-    private static final ImageIcon MINE_IMAGE = new ImageIcon("images/mine.png");
+    private static final ImageIcon MINE_IMAGE = new ImageIcon(System.getProperty("java.class.path") + "/../../../images/mine.png");
 
     /**
      * Makes the GUI and shows it
      */
     private static void createAndShowGUI() {
+        System.out.println(System.getProperty("java.class.path"));
         frame = new JFrame("Minesweeper");
         frame.setVisible(true);
         // Add 20 on the width and the height as a wiggle room (the 60 makes up for the heading)
@@ -515,9 +516,7 @@ public class GUI {
             }
         }
     }
-
-
-
+    
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
