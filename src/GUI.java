@@ -445,14 +445,14 @@ public class GUI {
                     // If it is the one we hit
                     if (i == row && j == col) {
                         buttons[i][j].setIcon(MINE_IMAGE);
-                        buttons[i][j].setBackground(Color.RED);
+                        buttons[i][j].setBackground(new Color(255, 100, 100));
                     } else if (!gameBoard.hasFlag(i, j)) {
                         buttons[i][j].setIcon(MINE_IMAGE);
                         buttons[i][j].setBackground(Color.WHITE);
                     }
-
+                    // If it isn't a mine and has a flag
                 } else if (gameBoard.hasFlag(i, j)) {
-                    buttons[i][j].setBackground(Color.RED);
+                    buttons[i][j].setBackground(new Color(255, 100, 100));
                 }
             }
         }
