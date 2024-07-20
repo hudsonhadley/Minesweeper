@@ -49,15 +49,15 @@ public class GUI {
      * The color used by each number (note that index 0 is not used since no number is shown for a blank space)
      */
     private static final Color[] NUMBER_COLORS = new Color[]{
-           new Color(0, 0, 0), // 0
-           new Color(12, 183, 224), // 1
-           new Color(127, 206, 90), // 2
-           new Color(225, 101, 101), // 3
-           new Color(207, 88, 222), // 4
-           new Color(253, 148, 113), // 5
-           new Color(2, 33, 103), // 6
-           new Color(22, 65, 1), // 7
-           new Color(155, 155, 61), // 8
+            new Color(0, 0, 0), // 0
+            new Color(12, 183, 224), // 1
+            new Color(127, 206, 90), // 2
+            new Color(225, 101, 101), // 3
+            new Color(207, 88, 222), // 4
+            new Color(253, 148, 113), // 5
+            new Color(0, 68, 224), // 6
+            new Color(64, 180, 0), // 7
+            new Color(255, 255, 22), // 8
     };
 
     /**
